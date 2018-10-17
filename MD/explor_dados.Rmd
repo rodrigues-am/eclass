@@ -1,0 +1,62 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Carrega bibliotecas
+
+Geralmente fazemos o carregamento da biblioteca no início de cada rotina utilizando a função `library()`. Essa prática ajuda a rodar qualuqer rotina garantindo que as bibliotecas necessárias serão chamadas antes que as funções específicas sejam utilizadas.
+O comando `library(tidyverse)`, a partir do *tidyverse*, carrega automaticamente um conjunto de bibliotecas muito úteis como `tidyr` e `dplyr` para a manipulação de dados e a biblioteca `ggplot2` que permite gerar gráficos.
+>> Alerta: Parte dos erros nas rotinas ocorrer por não ter carregado corretamente as bibliotecas necessárias. Por isso, sempre verifique se as bibliotecas necessárias estão devidamente descriminadas.
+
+```{r bibliotecas, message=FALSE}
+library(tidyverse)
+library(ggthemes)
+```
+# Carrega dados
+
+Para carregar os dados criei uma rotina especíca no arquivo *carrega_dados_gdrive.R*. Essa rotina específica cria uma conexão com o Googledrive e carrega a primeira planilha do arquivo __Dados Novos__. Caso a planilha mude ou o aquivo mude de nome, isso deve ser alterado no arquivo __.R__. Os dados serão colocados em uma variável `ec`.
+Para carregar uma rotina externa, por exemplo em um arquivo __.R__, recomendo a utilização da função `source()`. Observe que coloquei o endereço absoluto "~/R..." para indicar o endereço do arquivo __.R__. 
+>> Alerta: Para que você possa utilizar isso no seu computador é importante indicar o endereço no seu próprio computador.
+
+```{r dados, message=FALSE}
+source("~/R/eclass/R/carrega_dados_gdrive.R")
+```
+# Explorar os dados, primeira aproximação.
+
+Como comentado anteriormente as informações estão colocadas na variável `ec`. Para que tenhamos uma visão geral da estrutura de `ec` podemos utilizar a função `str()` ou a função `glimpse()` oferecida no `tidyverse`. Ele irá imprimir na tela informações sobre a variável como número de linhas (observações) e colunas (variáveis), nome das colunas, tipo da coluna (int: número inteiro, chr: caracter, ftr: fator, etc), primeiras linhas dos dados.
+Além da estrutura do `data.frame` (ou seja `ec`), podemos imprimir um sumários estatistico dos dados com valores mínimos, máximos, média, mediana, etc. Isso pode ser muito útil para identificar dados anômalos. Para tanto a função que recomendo utilizar é a função `summary()`.
+>> Alerta: Nenhuma das funções está salvando as informações em novas variáveis. Ou seja, para usar a informação novamente é necessário chamar a função ou então salvar em uma variável específica.
+
+```{r}
+glimpse(ec)
+
+summary(ec)
+```
+
+# Selecionando algumas colunas (variáveis do `data.frame`)
+
+Nem sempre queremos manipular toda a informação disponível no `data.frame`. Para isso podemos utilizar a função `select()`. Essa função permitirá selecionar as colunas (variáveis) de interesse. A utilização dessa função é simples e bem direta.
+Veja que na rotina abaixo coloca no `ecsub` uma seleção de colunas do `ec`. Nessa seleção deixamos as variáveis que contenham no *nome a letra A* e a variável *Sexo*. Nesse caso mantemos todas as observações, ou seja, `ecsub` e `ec` deve ter o mesmo número de linhas. Isso pode ser verificado utilizando a função `glimpse()`.
+>> Alerta: Veja o __help__ da função `select()` com o comando `?select()`. A leitura do texto ajudará a esclarecer melhor sobre como a função deve ser utilizada.
+
+```{r}
+ecsub <- ec %>%
+  select(contains("A"), Sexo) 
+```
+# Criar um gráfico com o núemro de Sexo
+
+No R existem diversas forma de criar gráficos. Iremos utilizar a biblioteca `ggplot2`. Nela temos uma forma muito peculiar de criar o gráfico. Primeiramente definimos as variaveis que devem ser incluídas no gráfico com a função `ggplot()`. Essa função recebe o `data.frame`, que neste caso é `ec`, e as variaveis, que devem estar descritas dentro de `aes()`. Somente depois são definidos os parametros do gráfico, como tipo, cores e estilo.
+Para definir o tipo de gráfio utilizamos o parâmetro `geom_` seguido pelo tipo `bar`. O __help__ da biblioteca `ggplot2` deve fornecer detalhes sobre os parâmetros. Além disso, estamos utlizando a biblioteca `ggthemes` que traz alguns temas pré definidos para os gráficos. Utilizando a função `theme_economist()` podemos deixar nosso gráfico com a mesma aparência dos gráficos utlizados na revista The Economist.
+>> Alerta: Observe que ao final de cada função/linha do `ggplot()` devem ser concluídos com o sinal de `+`. Sem isso a rotina para no meio.
+
+```{r}
+psexo <- ggplot(ec, aes(x=factor(Sexo))) +
+  geom_bar(stat="count") +
+  theme_economist() +
+  labs(title="Número de homens e mulheres (M/F)", x="Sexo", y="Número")
+
+psexo
+```
+
+

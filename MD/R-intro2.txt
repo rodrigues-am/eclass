@@ -1,0 +1,163 @@
+R: 1. intro
+========================================================
+author: André Rodrigues
+date: 05 de outubro 2016
+autosize: true
+
+R e R Studio
+========================================================
+
+**R studio** é um grupo de ferramenta para melhor trabalhar com o R.
+
+**R** é uma linguagem de programação e ambiente de desenvolvimento de programas.
+
+Usar o R image[]!(https://www.r-project.org/Rlogo.png)
+========================================================
+**Vantagens**
+- software aberto e grátuito
+- leve e rápido
+- linguagem de programação
+- comunidade ativa e ampla
+- diversas soluções
+- linguagem flexível
+
+********
+**Desvantagens**
+- aprender programação básica
+- documentação em inglês
+- difícil comunicação com leigos
+- linguagem flexível
+
+
+Versão online/remota
+========================================================
+
+**Vantagens**
+- programação remota
+- não necessita instalação
+- utiliza o processa dor e memória de outro computador
+- não precisa se preocupar com a manutenção direta
+
+******
+**Desvantagens**
+- precisa de uma conexão de internet
+- não temos o controle completo do computador que operamos.
+
+
+Trabalho colaborativo
+========================================================
+
+- Git : controle de versão
+- [GitHub](https://github.com/rodrigues-am) : repositório de materiais
+- uso de dropbox e GoogleDrive
+- R Markdown (elaboração de relatórios rápidos)
+
+
+Onde encontrar informações
+========================================================
+
+Obs: Literatura em Inglês  Google Tradutor
+
+**Rbloggers** : [https://www.r-bloggers.com](https://www.r-bloggers.com)
+
+**STHDA** : [http://www.sthda.com/](http://www.sthda.com/)
+
+**Quick-R** : [http://www.statmethods.net/](http://www.statmethods.net/)
+
+**Cookbook** : [http://www.cookbook-r.com/](http://www.cookbook-r.com/)
+
+Em caso de dúvidas
+========================================================
+
+**Stackoverflow** : [http://stackoverflow.com/](http://stackoverflow.com/)
+
+**CRAN** : [https://cran.r-project.org/](https://cran.r-project.org/)
+
+**HELP** : ? ou ?? 
+``` 
+?ggplot 
+```
+
+
+O que é uma bibliotéca?
+========================================================
+
+É um conjunto de funções que podem ser utilizadas diretamente pelos usuários; uma caixa de ferramentas cheia de itens úteis.
+
+**Packages** e **Library**
+
+
+Instalando, carregando e usando
+=========================================================
+
+Instala pacotes
+```
+install.packages("ggplot2")
+```
+
+
+Carregas pacotes instalados
+```
+library(ggplot2)
+```
+
+Carregar função sem biblioteca
+=========================================================
+
+Mensagem de erro
+
+```
+select() # função da biblioteca dplyr
+
+Erro: não foi possível encontrar a função "select"
+```
+
+Manipulação de dados
+=========================================================
+
+Duas bibliotecas importantes:
+
+```
+library(dplyr)
+```
+>> Atualmente a biblioteca **dplyr** me parece mais adequada.
+
+```
+eclass.sub <- eclass %>% 
+              select(nome) %>%
+              filter(nome == "André Machado Rodrigues")
+```
+
+
+Visualização de dados
+=========================================================
+
+Duas bibliotecas importantes:
+
+```
+library(graphics) # função plot
+
+library(ggplot2)
+
+# outras bibliotecas
+library(lattice); library(plotly); library(leaflet)
+```
+Estatítica descritiva
+=========================================================
+
+```
+library(descr) # função CrossTable
+
+library(Hmisc) # funções diversas
+```
+
+Quick list of useful R packages
+=========================================================
+Algumas dicas do [support.rstudio.com](https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages)
+
+Mostra diversos pacotes que podem ser uteis e interessante para explorar e trabalhar.
+
+Carregando os dados E-Class
+=========================================================
+
+

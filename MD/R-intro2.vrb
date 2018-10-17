@@ -1,0 +1,8 @@
+\frametitle{Estatítica descritiva}
+
+\begin{verbatim}
+library(descr) # função CrossTable
+
+library(Hmisc) # funções diversas
+\end{verbatim}
+

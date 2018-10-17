@@ -1,0 +1,142 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Análise descritiva *E-CLASS 2016*
+
+### Carreganmento preliminar
+
+```{r lib}
+#### Carrega Bibliotecas ####
+library(tidyr)    # organização de dados
+library(dplyr)    # manipulação de daddos
+library(ggplot2)  # produção de gráficos
+library(ggthemes) # temas e cores para gráficos
+library(descr)    # produção de tabela cruzada
+library(effsize)
+```
+
+```{r data}
+#### Carrega dados ####
+eclass16 <- read.csv("/data/andre/R/eclass/dados/eclass_2016.csv")
+```
+
+
+### Seleção e preparação dos dados [*PART I* do questionário]
+
+```{r sum}
+ec.p1 <- eclass16 %>%
+  select(NUSP, Q101A:Q130B)
+
+# Criação do sumário
+ec.desc <- ec.p1 %>%
+  select(-NUSP) %>%
+  gather(key=quest, value=resp) %>%
+  group_by(quest) %>%
+  summarise(med=mean(resp, na.rm = TRUE), dp=sd(resp, na.rm = TRUE),
+            errop=dp/sqrt(n()),
+            total=n()) %>%
+  mutate(type=ifelse(grepl("A", quest), "P", "F")) %>%
+  arrange(quest)
+
+head(ec.desc)
+print(ec.desc)
+```
+
+
+```{r cohen_d}
+
+ec.dif <- ec.p1 %>%
+  gather(QUEST, RESP, Q101A:Q130B) %>%
+  separate(QUEST, c("QUEST", "TP"), sep=4) %>%
+  mutate(TP=as.factor(TP), QUEST=as.factor(QUEST)) %>%
+  group_by(QUEST) %>%
+  summarise(med=mean(RESP), d=cohen.d(RESP, TP)$estimate,
+            mag=cohen.d(RESP, TP)$magnitude,
+            conf.inf=as.numeric(cohen.d(RESP, TP)$conf.int[1]),
+            conf.sup=as.numeric(cohen.d(RESP, TP)$conf.int[2]))
+head(ec.dif)
+
+gd <- ggplot(ec.dif, aes(y=d, x=reorder(factor(QUEST), abs(d)), fill=mag))+
+  geom_bar(stat="identity")+
+  theme_minimal() +
+  scale_fill_manual(values = c("#8F8F8F", "#404040", "#EE6A50", "#CD3333"),name="Magnitude")+
+  labs(y="Cohen's d", x="Questões", title="Diference between students' self \nperspective and their view on Physics' practice", 
+       caption= "E-CLASS 2016")+
+  coord_flip()
+
+gd
+
+ggsave("~/R/eclass/MD/g1.png", gd, width = 7, height=10)
+
+gd1 <- ggplot(ec.dif, aes(y=abs(d), x=reorder(factor(QUEST), abs(d)), fill=mag))+
+  geom_bar(stat="identity")+
+  theme_minimal() +
+  scale_fill_manual(values = c("#8F8F8F", "#404040", "#EE6A50", "#CD3333"),name="Magnitude")+
+  labs(y="|Cohen's d|", x="Questões", title="Diference between students' self \nperspective and their view on Physics' practice", 
+       caption= "E-CLASS 2016")+
+  coord_flip()
+
+gd1
+
+ggsave("~/R/eclass/MD/g2.png", gd1, width = 7, height=10)
+
+gd2 <- ggplot(ec.dif, aes(y=abs(d), x=factor(QUEST), fill=mag))+
+  geom_bar(stat="identity")+
+  theme_minimal() +
+  scale_fill_manual(values = c("#8F8F8F", "#404040", "#EE6A50", "#CD3333"),name="Magnitude")+
+  labs(y="|Cohen's d|", x="Questões", title="Diference between students' self \nperspective and their view on Physics' practice", 
+       caption= "E-CLASS 2016")+
+  coord_flip()
+
+gd2
+
+ggsave("~/R/eclass/MD/g3.png", gd2, width = 7, height=10)
+
+gd3 <- ggplot(ec.dif, aes(y=d, x=factor(QUEST), fill=mag))+
+  geom_bar(stat="identity")+
+  theme_minimal() +
+  scale_fill_manual(values = c("#8F8F8F", "#404040", "#EE6A50", "#CD3333"),name="Magnitude")+
+  labs(y="Cohen's d", x="Questões", title="Diference between students' self \nperspective and their view on Physics' practice", 
+       caption= "E-CLASS 2016")+
+  coord_flip()
+
+gd3
+
+ggsave("~/R/eclass/MD/g4.png", gd3, width = 7, height=10)
+
+write.csv(ec.dif,"~/R/eclass/MD/cohen_d.csv")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+```{r graf_descr}
+gd1 <- ggplot(ec.desc, aes(x=reorder(factor(quest), desc(quest)), y=med)) +
+  geom_point(aes(fill=type), shape=21, size=2) +
+  geom_errorbar(aes(ymin=med-errop, ymax=med+errop),
+                size=.3, width=.2, position=position_dodge(.9)) +
+  theme_minimal() +
+  scale_fill_wsj(name="Resposta", 
+                 labels=c("Físico experimental", "Você mesmo")) +
+  labs(y=NULL, x="Questões", title="Média das respostas por questão", 
+       caption= "E-CLASS 2016") +
+  coord_flip()
+ 
+
+gd1
+
+ggsave("p1.png", path="~/R/eclass/MD/", gd1, width=8,height=8)
+
+
+```
+

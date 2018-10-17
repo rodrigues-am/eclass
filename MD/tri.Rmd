@@ -1,0 +1,99 @@
+---
+title: 'Teoria de Resposta ao Item: E-Class'
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+Esse programa trata os dados do E-class a partir da tri.
+```{r}
+
+```
+
+```{r biblioteca, message=FALSE}
+library(tidyverse)
+library(mirt)
+library(knitr)
+```
+
+#Organização dos dados
+```{r}
+ec <- seleclass %>%
+  select(contains("A")) 
+```
+
+#Como são os dados
+```{r}
+glimpse(ec)
+```
+
+#Criação do modelo
+```{r results='hide'}
+ec.tri <- mirt(ec, 1, itemtype = 'graded', verbose=FALSE)
+
+```
+
+
+```{r}
+summary(ec.tri)
+coef(ec.tri, simplify = TRUE)
+p1 <- plot(ec.tri, type="itemscore")
+p1
+
+p2 <- plot(ec.tri, type="info")
+p2
+
+p3 <- plot(ec.tri, type="trace")
+p3
+```
+
+
+#Selecionando apenas os item com boa disciminação e carga fatorial alta
+Cargas (loads)
+
+1, 7,8, 22, 10, 22, 30
+
+Melhor descriminação
+
+1*, 2, 5, 8*, 9, 10, 14, 15, 18, 20, 22*, 23, 24, 26, 30*
+
+Selecionados
+
+c(1,8,22,30)
+
+```{r}
+
+vars <- c("1A","8A","22A","30A")
+ecs <- seleclass %>%
+  select(one_of(vars)) 
+```
+
+#Como são os dados
+```{r}
+glimpse(ecs)
+```
+
+
+#Criação do modelo
+```{r results='hide'}
+ec.tris <- mirt(ecs, 1, itemtype = 'graded', verbose=FALSE)
+
+```
+
+
+```{r}
+summary(ec.tris)
+coef(ec.tris, simplify = TRUE)
+p1 <- plot(ec.tris, type="itemscore")
+p1
+
+p2 <- plot(ec.tris, type="info")
+p2
+
+p3 <- plot(ec.tris, type="trace")
+p3
+
+
+sc <- fscores(ec.tris)
+histogram(sc)
+```
